@@ -1,0 +1,88 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import '../styles/prose.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  category?: string;
+  tags?: string[];
+  readingTime?: number;
+}
+
+const { title, description, pubDate, updatedDate, heroImage, category, tags, readingTime } = Astro.props;
+
+const formattedPubDate = pubDate ? new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(pubDate) : null;
+
+const formattedUpdatedDate = updatedDate ? new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(updatedDate) : null;
+---
+
+<BaseLayout title={title} description={description} image={heroImage} type="article">
+  <article class="container mx-auto px-4 py-8 max-w-3xl">
+    <header class="mb-8">
+      {category && (
+        <a href={`/kategori/${category.toLowerCase()}`} class="text-blue-600 text-sm font-medium uppercase tracking-wide">
+          {category}
+        </a>
+      )}
+
+      <h1 class="text-4xl font-bold mt-2 mb-4">{title}</h1>
+
+      <div class="flex items-center gap-4 text-gray-600 text-sm">
+        {formattedPubDate && (
+          <time datetime={pubDate?.toISOString()}>
+            {formattedPubDate}
+          </time>
+        )}
+        {readingTime && (
+          <span>{readingTime} min läsning</span>
+        )}
+      </div>
+
+      {formattedUpdatedDate && (
+        <p class="text-gray-500 text-sm mt-2">
+          Uppdaterad: {formattedUpdatedDate}
+        </p>
+      )}
+    </header>
+
+    {heroImage && (
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full h-auto rounded-lg mb-8"
+        loading="eager"
+      />
+    )}
+
+    <div class="prose prose-lg max-w-none">
+      <slot />
+    </div>
+
+    {tags && tags.length > 0 && (
+      <footer class="mt-8 pt-8 border-t">
+        <div class="flex flex-wrap gap-2">
+          {tags.map(tag => (
+            <a
+              href={`/tagg/${tag.toLowerCase()}`}
+              class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200"
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+      </footer>
+    )}
+  </article>
+</BaseLayout>

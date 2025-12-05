@@ -1,0 +1,78 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+
+const { title, description, image, type = 'website' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Site config - replace these with your actual values
+const siteName = 'Min SEO Sajt';
+const siteDescription = 'Din beskrivning här';
+const defaultImage = '/og-image.png';
+---
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Primary Meta Tags -->
+  <title>{title} | {siteName}</title>
+  <meta name="title" content={`${title} | ${siteName}`} />
+  <meta name="description" content={description || siteDescription} />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content={type} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description || siteDescription} />
+  <meta property="og:image" content={new URL(image || defaultImage, Astro.site)} />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:locale" content="sv_SE" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={canonicalURL} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description || siteDescription} />
+  <meta property="twitter:image" content={new URL(image || defaultImage, Astro.site)} />
+
+  <!-- Sitemap -->
+  <link rel="sitemap" href="/sitemap-index.xml" />
+
+  <slot name="head" />
+</head>
+<body class="min-h-screen bg-white text-gray-900">
+  <header class="border-b">
+    <nav class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="/" class="text-xl font-bold">{siteName}</a>
+        <ul class="flex gap-6">
+          <li><a href="/" class="hover:text-blue-600">Hem</a></li>
+          <li><a href="/blog" class="hover:text-blue-600">Artiklar</a></li>
+          <li><a href="/om-oss" class="hover:text-blue-600">Om oss</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="border-t mt-12 py-8">
+    <div class="container mx-auto px-4 text-center text-gray-600">
+      <p>&copy; {new Date().getFullYear()} {siteName}. Alla rättigheter förbehållna.</p>
+    </div>
+  </footer>
+</body>
+</html>

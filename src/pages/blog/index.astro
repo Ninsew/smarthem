@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Alla artiklar" description="Bläddra bland alla våra artiklar">
+  <section class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">Artiklar</h1>
+
+    {posts.length > 0 ? (
+      <div class="space-y-8">
+        {posts.map(post => (
+          <article class="border-b pb-8">
+            <h2 class="text-2xl font-bold mb-2">
+              <a href={`/blog/${post.slug}`} class="hover:text-blue-600">
+                {post.data.title}
+              </a>
+            </h2>
+            <time class="text-gray-500 text-sm">
+              {new Intl.DateTimeFormat('sv-SE', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }).format(post.data.pubDate)}
+            </time>
+            <p class="text-gray-600 mt-2">{post.data.description}</p>
+            <a href={`/blog/${post.slug}`} class="text-blue-600 hover:underline mt-2 inline-block">
+              Läs mer →
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="text-gray-500">Inga artiklar publicerade ännu.</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .space-y-8 > * + * {
+    margin-top: 2rem;
+  }
+
+  .pb-8 {
+    padding-bottom: 2rem;
+  }
+
+  .hover\:underline:hover {
+    text-decoration: underline;
+  }
+</style>
